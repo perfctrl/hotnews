@@ -1,37 +1,60 @@
 import * as vscode from 'vscode';
+import * as fs from 'fs';
 
 let myStatusBarItem: vscode.StatusBarItem;
+const messages = readMessage();
+let readNo = 0;
 export function activate({ subscriptions }: vscode.ExtensionContext) {
 
 	const commandId = "sample.helloWorld";
-	// subscriptions.push(vscode.commands.registerCommand(commandId, () => {
-	// 	const n = getNumberOfSelectedLines(vscode.window.activeTextEditor);
-	// 	vscode.window.showInformationMessage(`Yeah, ${n} lines selected...`);
-	// }));
-	myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 10);
+	subscriptions.push(vscode.commands.registerCommand(commandId, () => {
+		console.log(`command: ${commandId} readNo:${readNo}`);
+		vscode.env.openExternal(vscode.Uri.parse("https://www.baidu.com"));
+	}));
+	myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 300);
 	myStatusBarItem.command = commandId;
 	subscriptions.push(myStatusBarItem);
+	startLoop();
 
-	subscriptions.push(vscode.window.onDidChangeActiveTextEditor(updateStatusBarItem));
-	subscriptions.push(vscode.window.onDidChangeTextEditorSelection(updateStatusBarItem));
+}
+const getConfig = () => vscode.workspace.getConfiguration("hotnews");
+
+
+function readMessage(): any[] {
+	try {
+		console.log(111, __dirname);
+		const data = fs.readFileSync("Users/apu/mywork/learn/vscode_plugin/hotNews/output.json", "utf8");
+		const items = JSON.parse(data);
+		return items;
+	} catch (err) {
+		console.log(err);
+		return [];
+	}
 }
 
-function updateStatusBarItem(): void {
-	const n = getNumberOfSelectedLines(vscode.window.activeTextEditor);
-	if (n > 0) {
-		myStatusBarItem.text = `$(megaphone) ${n} line(s) selected`;
+function sleep(ms: number) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function startLoop() {
+	while (true) {
+		if (readNo >= messages.length) {
+			readNo = 0;
+		}
+		const message = messages[readNo];
+		let title = message.Title;
+		if (title.length > 20) {
+			title = title.substring(0, 17) + '...';
+		}
+		console.log(11111, message, message.Title.length, title);
+		readNo++;
+		myStatusBarItem.text = `${message.FromSource}: ${title}`;
+		myStatusBarItem.tooltip = "tooltip";
 		myStatusBarItem.show();
-	} else {
+		const scrollSpeed = getConfig().scrollSpeed * 1000;
+		console.log("speed: ", scrollSpeed);
+		await sleep(scrollSpeed);
 		myStatusBarItem.hide();
 	}
-}
-
-function getNumberOfSelectedLines(editor: vscode.TextEditor | undefined): number{
-	let lines = 0;
-	if (editor) {
-		lines = editor.selections.reduce((prev, curr) => prev + (curr.end.line - curr.start.line), 0);
-	}
-	return lines;
 }
 
 export function deactivate() {}
