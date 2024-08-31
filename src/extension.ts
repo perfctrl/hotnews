@@ -1,36 +1,31 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import { Message } from './messageType';
+import { Douyin } from './messages/douyin';
+import { Zhihu } from './messages/zhihu';
 
 let myStatusBarItem: vscode.StatusBarItem;
-const messages = readMessage();
+let messages: Message[] = [];
 let readNo = 0;
-export function activate({ subscriptions }: vscode.ExtensionContext) {
-
-	const commandId = "sample.helloWorld";
+let currMessage: Message;
+export async function activate({ subscriptions }: vscode.ExtensionContext) {
+	messages = await (new Zhihu().getMessages());
+	const douyinData = await (new Douyin().getMessages());
+	messages.push(...douyinData);
+	console.log(111, messages.length);
+	const commandId = "hotnews.moyu";
 	subscriptions.push(vscode.commands.registerCommand(commandId, () => {
-		console.log(`command: ${commandId} readNo:${readNo}`);
-		vscode.env.openExternal(vscode.Uri.parse("https://www.baidu.com"));
+		if (currMessage?.Url) {
+			vscode.env.openExternal(vscode.Uri.parse(currMessage?.Url));
+		}
 	}));
-	myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 300);
+	myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 200);
 	myStatusBarItem.command = commandId;
 	subscriptions.push(myStatusBarItem);
 	startLoop();
 
 }
 const getConfig = () => vscode.workspace.getConfiguration("hotnews");
-
-
-function readMessage(): any[] {
-	try {
-		console.log(111, __dirname);
-		const data = fs.readFileSync("Users/apu/mywork/learn/vscode_plugin/hotNews/output.json", "utf8");
-		const items = JSON.parse(data);
-		return items;
-	} catch (err) {
-		console.log(err);
-		return [];
-	}
-}
 
 function sleep(ms: number) {
 	return new Promise(resolve => setTimeout(resolve, ms));
@@ -40,21 +35,31 @@ async function startLoop() {
 		if (readNo >= messages.length) {
 			readNo = 0;
 		}
-		const message = messages[readNo];
-		let title = message.Title;
-		if (title.length > 20) {
-			title = title.substring(0, 17) + '...';
+		currMessage = messages[readNo] ?? '';
+		if (currMessage) {
+			let title = currMessage.Title;
+			if (title.length > 20) {
+				title = title.substring(0, 17) + '...';
+			}
+			readNo++;
+			myStatusBarItem.text = `${currMessage.FromSource}: 热度: ${getHotValue(currMessage.HotValue)} ${title}`;
+			myStatusBarItem.tooltip = "tooltip";
+			myStatusBarItem.show();
+			const scrollSpeed = getConfig().scrollSpeed * 1000;
+			await sleep(scrollSpeed);
+
 		}
-		console.log(11111, message, message.Title.length, title);
-		readNo++;
-		myStatusBarItem.text = `${message.FromSource}: ${title}`;
-		myStatusBarItem.tooltip = "tooltip";
-		myStatusBarItem.show();
-		const scrollSpeed = getConfig().scrollSpeed * 1000;
-		console.log("speed: ", scrollSpeed);
-		await sleep(scrollSpeed);
 		myStatusBarItem.hide();
 	}
 }
+const getHotValue = (value: number) => {
+	if (value > 10000) {
+		return `${Math.ceil(value / 10000)}万`;
+	} else if (value > 1000) {
+		return `${Math.ceil(value / 1000)}千`;
+	}
+	return value.toString();
 
-export function deactivate() {}
+};
+
+export function deactivate() { }

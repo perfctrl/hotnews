@@ -1,7 +1,7 @@
 {
   "name": "hotNews",
-  "displayName": "hot",
-  "description": "hot news",
+  "displayName": "hotNews",
+  "description": "Scroll through daily trending searches, including Zhihu, Douyin, etc.",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.92.0"
