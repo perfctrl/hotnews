@@ -9,10 +9,11 @@ let messages: Message[] = [];
 let readNo = 0;
 let currMessage: Message;
 export async function activate({ subscriptions }: vscode.ExtensionContext) {
-	messages = await (new Zhihu().getMessages());
+	const zhihuData = await (new Zhihu().getMessages());
 	const douyinData = await (new Douyin().getMessages());
+	messages.push(...zhihuData);
 	messages.push(...douyinData);
-	console.log(111, messages.length);
+	console.log("total length:", messages.length);
 	const commandId = "hotnews.moyu";
 	subscriptions.push(vscode.commands.registerCommand(commandId, () => {
 		if (currMessage?.Url) {
