@@ -2,7 +2,8 @@
   "name": "hotNews",
   "displayName": "hotNews",
   "description": "Scroll through daily trending searches, including Zhihu, Douyin, etc.",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "author": "albert.pu email: perfctrl@gmail.com",
   "engines": {
     "vscode": "^1.92.0"
   },
