@@ -18,12 +18,26 @@
   "contributes": {
     "configuration": [
       {
-        "title": "scroll speed",
+        "title": "hot news",
         "properties": {
           "hotnews.scrollSpeed": {
             "type": "integer",
             "description": "Pick scroll speed in second",
             "default": 5
+          },
+          "hotnews.newsSource": {
+            "type": "array",
+            "description": "Select news source",
+            "default": [
+              "zhihu"
+            ],
+            "items": {
+              "type": "string",
+              "enum": [
+                "zhihu",
+                "douyin"
+              ]
+            }
           }
         }
       }
