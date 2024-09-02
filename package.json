@@ -9,11 +9,7 @@
   },
   "publisher": "albertPu",
   "categories": [
-    "Other",
-    "热搜",
-    "hot news",
-    "news",
-    "hot top news"
+    "Other"
   ],
   "activationEvents": [
     "*"
