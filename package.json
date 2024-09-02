@@ -1,15 +1,19 @@
 {
   "name": "hotNews",
   "displayName": "hot News in China",
-  "description": "Scroll through daily trending searches, including Zhihu, Douyin, etc.",
-  "version": "1.0.0",
+  "description": "Scroll through daily trending searches, including Weibo, Zhihu, Douyin, etc.",
+  "version": "1.1.0",
   "author": "albert.pu email: perfctrl@gmail.com",
   "engines": {
     "vscode": "^1.92.0"
   },
   "publisher": "albertPu",
   "categories": [
-    "Other"
+    "Other",
+    "热搜",
+    "hot news",
+    "news",
+    "hot top news"
   ],
   "activationEvents": [
     "*"
@@ -22,24 +26,51 @@
         "properties": {
           "hotnews.scrollSpeed": {
             "type": "integer",
-            "description": "Pick scroll speed in second",
+            "description": "Scrolling time(seconds) for each trending topic.",
             "default": 5
           },
-          "hotnews.newsSource": {
+          "hotnews.interval": {
+            "type": "integer",
+            "description": "Fetch the latest data every x minutes.",
+            "default": 30,
+            "enum": [
+              15,
+              30,
+              45,
+              60
+            ]
+          },
+          "hotnews.msgSource": {
             "type": "array",
-            "description": "Select news source",
+            "description": "Select data source.",
             "default": [
-              "zhihu"
+              "weibo"
             ],
             "items": {
               "type": "string",
               "enum": [
                 "zhihu",
-                "douyin"
+                "douyin",
+                "weibo",
+                "jinritoutiao"
               ]
             }
           }
         }
+      }
+    ],
+    "commands": [
+      {
+        "command": "hotnews.start",
+        "title": "Trending:Start playing trending topics"
+      },
+      {
+        "command": "hotnews.stop",
+        "title": "Trending:Stop playing trending topics"
+      },
+      {
+        "command": "hotnews.refresh",
+        "title": "Trending:Refresh trending topics data"
       }
     ]
   },
@@ -58,16 +89,20 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.92.0",
+    "@types/lodash": "^4.17.7",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
+    "@types/vscode": "^1.92.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.11.0",
-    "eslint": "^8.57.0",
-    "esbuild": "^0.21.5",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.4.5",
     "@vscode/test-cli": "^0.0.9",
-    "@vscode/test-electron": "^2.4.0"
+    "@vscode/test-electron": "^2.4.0",
+    "esbuild": "^0.21.5",
+    "eslint": "^8.57.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
   }
 }

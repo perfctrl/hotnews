@@ -1,66 +1,135 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
-import { Message } from './messageType';
-import { Douyin } from './messages/douyin';
-import { Zhihu } from './messages/zhihu';
+import { Message } from './@types/messageType';
+import { getConfig } from './initConfig';
+import { MsgConfig } from './@types/messageConfig';
+import { MessageFactory } from './messages/factories';
+import { formatDisplayMessage, formatHotValue, formatTooltipMessage } from './screen/screen';
+import { loggerInfo } from './logs/logger';
 
 let myStatusBarItem: vscode.StatusBarItem;
 let messages: Message[] = [];
-let readNo = 0;
+let readNo: number = 0;
 let currMessage: Message;
-export async function activate({ subscriptions }: vscode.ExtensionContext) {
-	const zhihuData = await (new Zhihu().getMessages());
-	const douyinData = await (new Douyin().getMessages());
-	messages.push(...zhihuData);
-	messages.push(...douyinData);
-	console.log("total length:", messages.length);
+let scrollFlag: boolean = true;
+let intervalId: NodeJS.Timeout | undefined;
+
+export async function activate(context: vscode.ExtensionContext) {
+
+	initCommand(context);
+
+	start(getConfig(), true);
+
+}
+
+const initCommand = (context: vscode.ExtensionContext) => {
 	const commandId = "hotnews.moyu";
-	subscriptions.push(vscode.commands.registerCommand(commandId, () => {
+	const startCommandId = "hotnews.start";
+	const stopCommandId = "hotnews.stop";
+	const refreshCommandId = "hotnews.refresh";
+
+	context.subscriptions.push(vscode.commands.registerCommand(commandId, () => {
 		if (currMessage?.Url) {
 			vscode.env.openExternal(vscode.Uri.parse(currMessage?.Url));
 		}
 	}));
 	myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 200);
 	myStatusBarItem.command = commandId;
-	subscriptions.push(myStatusBarItem);
-	startLoop();
+	context.subscriptions.push(myStatusBarItem);
 
-}
-const getConfig = () => vscode.workspace.getConfiguration("hotnews");
+	const startCommand = vscode.commands.registerCommand(startCommandId, () => {
+		if (scrollFlag) {
+			return;
+		}
+		start(getConfig(), true);
+	});
+	context.subscriptions.push(startCommand);
 
-function sleep(ms: number) {
+	const stopCommand = vscode.commands.registerCommand(stopCommandId, () => {
+		if (!scrollFlag) {
+			return;
+		}
+		stop();
+	});
+	context.subscriptions.push(stopCommand);
+
+	const refreshCommand = vscode.commands.registerCommand(refreshCommandId, async () => {
+		if (!scrollFlag) {
+			vscode.window.showInformationMessage('暂无法刷新,请先start');
+		} else {
+			stop();
+			setTimeout(() => {
+				start(getConfig(), true);
+				vscode.window.showInformationMessage('已刷新最想热搜榜...');
+			}, getConfig().scrollSpeed * 1000 + 120);
+
+		}
+	});
+	context.subscriptions.push(refreshCommand);
+
+	vscode.workspace.onDidChangeConfiguration(event => {
+		if (event.affectsConfiguration('hotnews.interval') || event.affectsConfiguration('hotnews.scrollSpeed') || event.affectsConfiguration("hotnews.msgSource")) {
+			stop();
+			setTimeout(() => start(getConfig(), true), getConfig().scrollSpeed * 1000 + 120);
+		}
+	});
+
+};
+
+const initRollingMessages = async (config: MsgConfig) => {
+	loggerInfo("fetch message: start");
+	messages = await (new MessageFactory(config.msgSource).factories());
+	loggerInfo(`fetch message: end: length: ${messages.length}`);
+	readNo = 0;
+
+	startRolling(config);
+};
+
+const stop = () => {
+	scrollFlag = false;
+	clearInterval(intervalId);
+	intervalId = undefined;
+	myStatusBarItem.hide();
+
+};
+
+const start = (config: MsgConfig, init: boolean = false) => {
+	if (init) {
+		scrollFlag = true;
+		initRollingMessages(config);
+	}
+	if (intervalId) {
+		clearInterval(intervalId);
+	}
+	intervalId = setTimeout(async () => {
+		await initRollingMessages(config);
+		start(config, false);
+	}, config.interval * 60 * 1000);
+
+};
+const sleep = (ms: number) => {
 	return new Promise(resolve => setTimeout(resolve, ms));
-}
-async function startLoop() {
-	while (true) {
+};
+
+const startRolling = async (config: MsgConfig) => {
+	loggerInfo(`start.., ${scrollFlag}, ${messages.length}`);
+	while (scrollFlag && messages.length > 0) {
 		if (readNo >= messages.length) {
 			readNo = 0;
 		}
 		currMessage = messages[readNo] ?? '';
+		loggerInfo(currMessage);
 		if (currMessage) {
-			let title = currMessage.Title;
-			if (title.length > 20) {
-				title = title.substring(0, 17) + '...';
-			}
 			readNo++;
-			myStatusBarItem.text = `${currMessage.FromSource}: 热度: ${getHotValue(currMessage.HotValue)} ${title}`;
-			myStatusBarItem.tooltip = "tooltip";
+			myStatusBarItem.text = formatDisplayMessage(currMessage);
+			myStatusBarItem.tooltip = formatTooltipMessage(currMessage);
 			myStatusBarItem.show();
-			const scrollSpeed = getConfig().scrollSpeed * 1000;
-			await sleep(scrollSpeed);
+			await sleep(config.scrollSpeed * 1000);
 
 		}
 		myStatusBarItem.hide();
 	}
-}
-const getHotValue = (value: number) => {
-	if (value > 10000) {
-		return `${Math.ceil(value / 10000)}万`;
-	} else if (value > 1000) {
-		return `${Math.ceil(value / 1000)}千`;
-	}
-	return value.toString();
-
+	myStatusBarItem.hide();
+	loggerInfo("start.. finish rolling");
 };
 
 export function deactivate() { }

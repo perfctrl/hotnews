@@ -1,4 +1,4 @@
-import { FromSource } from "./messages/message";
+import { FromSource } from "../messages/message";
 
 export interface Message {
     FromSource: FromSource;
