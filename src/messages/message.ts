@@ -6,5 +6,6 @@ export interface BaseMessage {
 
 export enum FromSource {
     Douyin = 'douyin',
-    Zhihu = 'zhihu'
+    Zhihu = 'zhihu',
+    Weibo = 'weibo'
 }
