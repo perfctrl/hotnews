@@ -1,8 +1,12 @@
-
-export const loggerInfo = (message: any) => {
-    // console.log(message);
+const debug = true;
+export const loggerInfo = (...params: any[]) => {
+    if (debug) {
+        console.log(new Date(), ...params);
+    }
 };
 
-export const loggerWarn = (message: any) => {
-    // console.warn(message);
+export const loggerWarn = (...params: any[]) => {
+    if (debug) {
+        console.warn(new Date(), ...params);
+    }
 };

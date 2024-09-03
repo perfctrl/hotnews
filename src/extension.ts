@@ -3,7 +3,7 @@ import { Message } from './@types/messageType';
 import { getConfig } from './initConfig';
 import { MsgConfig } from './@types/messageConfig';
 import { MessageFactory } from './messages/factories';
-import { formatDisplayMessage, formatHotValue, formatTooltipMessage } from './screen/screen';
+import { formatDisplayMessage, formatTooltipMessage } from './screen/screen';
 import { loggerInfo } from './logs/logger';
 
 let myStatusBarItem: vscode.StatusBarItem;
@@ -12,6 +12,7 @@ let readNo: number = 0;
 let currMessage: Message;
 let scrollFlag: boolean = true;
 let intervalId: NodeJS.Timeout | undefined;
+let configChangeIntervalId: NodeJS.Timeout | undefined;
 
 export async function activate(context: vscode.ExtensionContext) {
 
@@ -60,7 +61,7 @@ const initCommand = (context: vscode.ExtensionContext) => {
 			setTimeout(() => {
 				start(getConfig(), true);
 				vscode.window.showInformationMessage('已刷新最想热搜榜...');
-			}, getConfig().scrollSpeed * 1000 + 120);
+			}, getConfig().scrollSpeed * 1000 + 500);
 
 		}
 	});
@@ -68,8 +69,13 @@ const initCommand = (context: vscode.ExtensionContext) => {
 
 	vscode.workspace.onDidChangeConfiguration(event => {
 		if (event.affectsConfiguration('hotnews.interval') || event.affectsConfiguration('hotnews.scrollSpeed') || event.affectsConfiguration("hotnews.msgSource")) {
-			stop();
-			setTimeout(() => start(getConfig(), true), getConfig().scrollSpeed * 1000 + 120);
+			if (configChangeIntervalId) {
+				clearTimeout(configChangeIntervalId);
+			}
+			configChangeIntervalId = setTimeout(() => {
+				stop();
+				setTimeout(() => start(getConfig(), true), getConfig().scrollSpeed * 1000 + 500);
+			}, 5000);
 		}
 	});
 
