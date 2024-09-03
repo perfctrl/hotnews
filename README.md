@@ -3,13 +3,16 @@
 
 ## Features
 
-一旦安装完成, 状态栏底部将自动滚动显示热搜信息, 包括抖音, 今日头条, 微博, 知乎等, 后续将会更多关于程序员的热榜更新
-格式如: douyin:热度:49万 为什么黄河没有那么黄了?
-鼠标点击它, 支持跳转到对应的网页
-当然, 这些数据源是可以配置的, 比如你支队微博感兴趣, 可以到设置中只选中微博数据源
-默认的是每30分钟一次去拉取网络数据, 这个也可以改, 也支持手动去拉, 执行命令: Trending:Refresh trending topics data
-如果不想它继续播放: 请执行命令: Trending:Stop playing trending topics
-当然继续播放命令是: Trending:Start playing trending topics
+一旦安装完成, 状态栏底部将自动滚动显示热搜信息, 包括抖音, 今日头条, 微博, 知乎等, 后续将会更多关于程序员的热榜更新  
+格式如: douyin:热度:49万 为什么黄河没有那么黄了?  
+![预览](images/barbottom.png)   
+鼠标点击它, 支持跳转到对应的网页  
+当然, 这些数据源是可以配置的, 比如你支队微博感兴趣, 可以到设置中只选中微博数据源  
+![配置](images/config.png)
+默认的是每30分钟一次去拉取网络数据, 这个也可以改, 也支持手动去拉, 执行命令: Trending:Refresh trending topics data  
+如果不想它继续播放: 请执行命令: Trending:Stop playing trending topics 
+当然继续播放命令是: Trending:Start playing trending topics 
+![命令](images/command.png)
 
 
 ## Requirements
