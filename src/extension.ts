@@ -5,64 +5,58 @@ import { MsgConfig } from './@types/messageConfig';
 import { MessageFactory } from './messages/factories';
 import { formatDisplayMessage, formatTooltipMessage } from './screen/screen';
 import { loggerInfo } from './logs/logger';
+import isEmpty from 'lodash/isEmpty';
 
 let myStatusBarItem: vscode.StatusBarItem;
 let messages: Message[] = [];
 let readNo: number = 0;
 let currMessage: Message;
-let scrollFlag: boolean = true;
-let intervalId: NodeJS.Timeout | undefined;
+let updateMessagesIntervalId: NodeJS.Timeout | undefined;
 let configChangeIntervalId: NodeJS.Timeout | undefined;
+let rollingIntervalId: NodeJS.Timeout | undefined;
 
 export async function activate(context: vscode.ExtensionContext) {
 
-	initCommand(context);
+	initPlugin(context);
 
-	start(getConfig(), true);
+	start();
 
 }
 
-const initCommand = (context: vscode.ExtensionContext) => {
+const initPlugin = (context: vscode.ExtensionContext) => {
+
 	const commandId = "hotnews.moyu";
-	const startCommandId = "hotnews.start";
-	const stopCommandId = "hotnews.stop";
-	const refreshCommandId = "hotnews.refresh";
 
 	context.subscriptions.push(vscode.commands.registerCommand(commandId, () => {
 		if (currMessage?.Url) {
 			vscode.env.openExternal(vscode.Uri.parse(currMessage?.Url));
 		}
 	}));
-	myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 200);
+	myStatusBarItem = vscode.window.createStatusBarItem('gitlens-graph', vscode.StatusBarAlignment.Right, 200);
 	myStatusBarItem.command = commandId;
 	context.subscriptions.push(myStatusBarItem);
 
-	const startCommand = vscode.commands.registerCommand(startCommandId, () => {
-		if (scrollFlag) {
-			return;
+	const startCommand = vscode.commands.registerCommand("hotnews.start", () => {
+		if (!rollingIntervalId) {
+			start();
 		}
-		start(getConfig(), true);
 	});
 	context.subscriptions.push(startCommand);
 
-	const stopCommand = vscode.commands.registerCommand(stopCommandId, () => {
-		if (!scrollFlag) {
-			return;
+	const stopCommand = vscode.commands.registerCommand("hotnews.stop", () => {
+		if (rollingIntervalId) {
+			stop();
 		}
-		stop();
 	});
 	context.subscriptions.push(stopCommand);
 
-	const refreshCommand = vscode.commands.registerCommand(refreshCommandId, async () => {
-		if (!scrollFlag) {
-			vscode.window.showInformationMessage('暂无法刷新,请先start');
+	const refreshCommand = vscode.commands.registerCommand("hotnews.refresh", async () => {
+		if (!rollingIntervalId) {
+			vscode.window.showInformationMessage('暂无法刷新,请先Start');
 		} else {
 			stop();
-			setTimeout(() => {
-				start(getConfig(), true);
-				vscode.window.showInformationMessage('已刷新最想热搜榜...');
-			}, getConfig().scrollSpeed * 1000 + 500);
-
+			start();
+			vscode.window.showInformationMessage('已刷新最想热搜榜...');
 		}
 	});
 	context.subscriptions.push(refreshCommand);
@@ -74,7 +68,8 @@ const initCommand = (context: vscode.ExtensionContext) => {
 			}
 			configChangeIntervalId = setTimeout(() => {
 				stop();
-				setTimeout(() => start(getConfig(), true), getConfig().scrollSpeed * 1000 + 500);
+				start();
+				vscode.window.showInformationMessage('配置已生效...');
 			}, 5000);
 		}
 	});
@@ -85,40 +80,48 @@ const initRollingMessages = async (config: MsgConfig) => {
 	loggerInfo("fetch message: start");
 	messages = await (new MessageFactory(config.msgSource).factories());
 	loggerInfo(`fetch message: end: length: ${messages.length}`);
-	readNo = 0;
-
 	startRolling(config);
 };
 
-const stop = () => {
-	scrollFlag = false;
-	clearInterval(intervalId);
-	intervalId = undefined;
-	myStatusBarItem.hide();
 
-};
-
-const start = (config: MsgConfig, init: boolean = false) => {
-	if (init) {
-		scrollFlag = true;
+const start = () => {
+	const config = getConfig();
+	if (isEmpty(messages)) {
 		initRollingMessages(config);
 	}
-	if (intervalId) {
-		clearInterval(intervalId);
+	if (updateMessagesIntervalId) {
+		clearTimeout(updateMessagesIntervalId);
 	}
-	intervalId = setTimeout(async () => {
+	updateMessagesIntervalId = setTimeout(async () => {
 		await initRollingMessages(config);
-		start(config, false);
-	}, config.interval * 60 * 1000);
+		start();
+	}, config.interval);
 
 };
-const sleep = (ms: number) => {
-	return new Promise(resolve => setTimeout(resolve, ms));
+const stop = () => {
+	if (updateMessagesIntervalId) {
+		clearTimeout(updateMessagesIntervalId);
+		updateMessagesIntervalId = undefined;
+	}
+	if (configChangeIntervalId) {
+		clearTimeout(configChangeIntervalId);
+		configChangeIntervalId = undefined;
+	}
+	if (rollingIntervalId) {
+		clearInterval(rollingIntervalId);
+		rollingIntervalId = undefined;
+	}
+	readNo = 0;
+	messages = [];
+	myStatusBarItem.hide();
 };
 
-const startRolling = async (config: MsgConfig) => {
-	loggerInfo(`start.., ${scrollFlag}, ${messages.length}`);
-	while (scrollFlag && messages.length > 0) {
+const startRolling = (config: MsgConfig) => {
+	if (rollingIntervalId) {
+		clearInterval(rollingIntervalId);
+	}
+	rollingIntervalId = setInterval(() => {
+		myStatusBarItem.hide();
 		if (readNo >= messages.length) {
 			readNo = 0;
 		}
@@ -129,13 +132,11 @@ const startRolling = async (config: MsgConfig) => {
 			myStatusBarItem.text = formatDisplayMessage(currMessage);
 			myStatusBarItem.tooltip = formatTooltipMessage(currMessage);
 			myStatusBarItem.show();
-			await sleep(config.scrollSpeed * 1000);
 
 		}
-		myStatusBarItem.hide();
-	}
-	myStatusBarItem.hide();
-	loggerInfo("start.. finish rolling");
+	}, config.scrollSpeed);
 };
 
-export function deactivate() { }
+export function deactivate() {
+	stop();
+}

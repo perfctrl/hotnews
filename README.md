@@ -48,6 +48,11 @@ Initial first version, only a simple flow
 
 ### 1.2.0 (plan to do or whatever your thoughts, maybe you can email to me perfctrl@gmail.com)
 
+1. update reademe  
+2. optimization interval 
+
+### 1.3.0 (plan to do or whatever your thoughts, maybe you can email to me perfctrl@gmail.com)
+
 1. xxx
 
 ---

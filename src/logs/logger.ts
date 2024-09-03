@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 export const loggerInfo = (...params: any[]) => {
     if (debug) {
         console.log(new Date(), ...params);
