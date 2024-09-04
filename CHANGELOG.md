@@ -25,3 +25,4 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [1.2.1]
 
 - define Logo 
+- optimize activationEvents

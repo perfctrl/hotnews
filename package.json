@@ -1,6 +1,6 @@
 {
   "name": "hotNews",
-  "displayName": "hot News in China",
+  "displayName": "hot-news in China weibo, douyin, jinritoutiao...",
   "description": "Scroll through daily trending searches, including Weibo, Zhihu, Douyin, etc.",
   "version": "1.2.1",
   "author": "albert.pu email: perfctrl@gmail.com",
@@ -17,7 +17,7 @@
   ],
   "icon": "images/icon/momangguo128x128.png",
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {
