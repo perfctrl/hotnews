@@ -2,7 +2,7 @@
   "name": "hotNews",
   "displayName": "hot News in China",
   "description": "Scroll through daily trending searches, including Weibo, Zhihu, Douyin, etc.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": "albert.pu email: perfctrl@gmail.com",
   "engines": {
     "vscode": "^1.92.0"
@@ -15,6 +15,7 @@
   "categories": [
     "Other"
   ],
+  "icon": "images/icon/momangguo128x128.png",
   "activationEvents": [
     "*"
   ],
