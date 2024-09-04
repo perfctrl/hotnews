@@ -1,8 +1,8 @@
 {
   "name": "hotNews",
   "displayName": "hot-news in China weibo, douyin, jinritoutiao...",
-  "description": "Scroll through daily trending searches, including Weibo, Zhihu, Douyin, etc.",
-  "version": "1.2.1",
+  "description": "Scroll through daily trending searches, including Weibo, Zhihu, Douyin, Jinritoutiao, etc.",
+  "version": "1.2.3",
   "author": "albert.pu email: perfctrl@gmail.com",
   "engines": {
     "vscode": "^1.92.0"
@@ -74,7 +74,65 @@
         "command": "hotnews.refresh",
         "title": "Trending:Refresh trending topics data"
       }
-    ]
+    ],
+    "icons": {
+      "hn-weibo": {
+        "description": "weibo",
+        "default": {
+          "fontPath": "resource/iconfont.ttf",
+          "fontCharacter": "\\e635"
+        }
+      },
+      "hn-hotdegree": {
+        "description": "hot degree",
+        "default": {
+          "fontPath": "resource/iconfont.ttf",
+          "fontCharacter": "\\e756"
+        }
+      },
+      "hn-jinritoutiao": {
+        "description": "jin ri tou tiao",
+        "default": {
+          "fontPath": "resource/iconfont.ttf",
+          "fontCharacter": "\\e602"
+        }
+      },
+      "hn-zhihu": {
+        "description": "zhi hu",
+        "default": {
+          "fontPath": "resource/iconfont.ttf",
+          "fontCharacter": "\\e641"
+        }
+      },
+      "hn-baidu": {
+        "description": "baidu",
+        "default": {
+          "fontPath": "resource/iconfont.ttf",
+          "fontCharacter": "\\e8cb"
+        }
+      },
+      "hn-douyin": {
+        "description": "douyin",
+        "default": {
+          "fontPath": "resource/iconfont.ttf",
+          "fontCharacter": "\\e8db"
+        }
+      },
+      "hn-top-raning": {
+        "description": "top raning",
+        "default": {
+          "fontPath": "resource/iconfont.ttf",
+          "fontCharacter": "\\e86f"
+        }
+      },
+      "hn-juejin": {
+        "description": "juejin",
+        "default": {
+          "fontPath": "resource/iconfont.ttf",
+          "fontCharacter": "\\e516"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

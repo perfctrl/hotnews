@@ -6,6 +6,7 @@ import { Douyin } from "./douyin";
 import { Zhihu } from "./zhihu";
 import { loggerInfo } from "../logs/logger";
 import { Toutiao } from "./toutiao";
+import { slice } from "lodash";
 
 export class MessageFactory {
 
@@ -35,7 +36,12 @@ export class MessageFactory {
         for (let i = 0; i < spiders.length; i++) {
             const spiderMessages = await spiders[i].getMessages();
             loggerInfo(`fetch:${spiders[i].getFromSource()}:length: ${spiderMessages.length}`);
-            messages = concat(messages, spiderMessages);
+            if (spiderMessages.length > 50) {
+                messages = concat(messages, slice(spiderMessages, 0, 50));
+            } else {
+                messages = concat(messages, spiderMessages);
+
+            }
         }
 
         return messages;

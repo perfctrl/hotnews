@@ -26,3 +26,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - define Logo 
 - optimize activationEvents
+
+## [1.2.2]
+
+- define Logo 
+
+## [1.2.3]
+
+-  Optimize the status bar display icon.
