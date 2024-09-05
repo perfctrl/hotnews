@@ -34,3 +34,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [1.2.3]
 
 -  Optimize the status bar display icon.
+
+## [1.3.0]
+
+-  Optimize struct.
+-  speed fetch data up
