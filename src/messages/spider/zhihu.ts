@@ -1,7 +1,7 @@
-import { Message } from "../@types/messageType";
-import { BaseMessage, FromSource } from "./message";
-
-export class Zhihu implements BaseMessage {
+import { Message } from "../../@types/messageType";
+import { SpiderMessage } from "../abstractSpiderMessage";
+import { FromSource } from "../message";
+export class Zhihu extends SpiderMessage {
     private url: string = "https://www.zhihu.com/api/v3/feed/topstory/hot-lists/total";
 
     getFromSource(): FromSource {
@@ -9,7 +9,7 @@ export class Zhihu implements BaseMessage {
     }
 
     async getMessages(): Promise<Message[]> {
-        const response = await fetch(this.url);
+        const response = await this.fetchData(this.url);
         if (!response.ok) {
             return [];
         }

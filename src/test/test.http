@@ -1,0 +1,2 @@
+GET https://weibo.com/ajax/statuses/hot_band
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 13.0; rv:119.0) Gecko/20100101 Firefox/119.0

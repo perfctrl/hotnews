@@ -1,19 +1,19 @@
-import { Message } from "../@types/messageType";
-import { loggerInfo } from "../logs/logger";
-import { BaseMessage, FromSource } from "./message";
+import { Message } from './../../@types/messageType';
+import { SpiderMessage } from "../abstractSpiderMessage";
+import { FromSource } from "../message";
 
-export class Weibo implements BaseMessage {
+export class Weibo extends SpiderMessage {
     private url: string = "https://weibo.com/ajax/statuses/hot_band";
     getFromSource(): FromSource {
         return FromSource.Weibo;
     }
     async getMessages(): Promise<Message[]> {
-        const response = await fetch(this.url);
+        const response = await this.fetchData(this.url);
         if (!response.ok) {
+            response.statusText;
             return [];
         }
         const data: any = await response.json();
-        loggerInfo(data);
 
         let messages: Message[] = [];
         let topNo = 0;

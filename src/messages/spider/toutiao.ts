@@ -1,13 +1,14 @@
-import { Message } from "../@types/messageType";
-import { BaseMessage, FromSource } from "./message";
+import { Message } from "../../@types/messageType";
+import { SpiderMessage } from "../abstractSpiderMessage";
+import { FromSource } from "../message";
 
-export class Toutiao implements BaseMessage {
+export class Toutiao extends SpiderMessage {
     private url: string = "https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc";
     getFromSource(): FromSource {
         return FromSource.Jinritoutiao;
     }
     async getMessages(): Promise<Message[]> {
-        const response = await fetch(this.url);
+        const response = await this.fetchData(this.url);
         if (!response.ok) {
             return [];
         }

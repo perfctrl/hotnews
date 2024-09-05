@@ -1,13 +1,14 @@
-import { Message } from "../@types/messageType";
-import { BaseMessage, FromSource } from "./message";
+import { Message } from "../../@types/messageType";
+import { SpiderMessage } from "../abstractSpiderMessage";
+import { FromSource } from "../message";
 
-export class Douyin implements BaseMessage {
+export class Douyin extends SpiderMessage {
     private url: string = "https://www.iesdouyin.com/web/api/v2/hotsearch/billboard/word/";
     getFromSource(): FromSource {
         return FromSource.Douyin;
     }
     async getMessages(): Promise<Message[]> {
-        const response = await fetch(this.url);
+        const response = await this.fetchData(this.url);
         if (!response.ok) {
             return [];
         }
