@@ -2,7 +2,7 @@
   "name": "hotNews",
   "displayName": "hot-news in China weibo, douyin, jinritoutiao...",
   "description": "Scroll through daily trending searches, including Weibo, Zhihu, Douyin, Jinritoutiao, etc.",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "author": "albert.pu email: perfctrl@gmail.com",
   "engines": {
     "vscode": "^1.92.0"
@@ -11,11 +11,19 @@
     "type": "git",
     "url": "https://github.com/perfctrl/hotnews"
   },
+  "keywords": [
+    "hot news",
+    "weibo",
+    "zhihu",
+    "jinritoutiao",
+    "douyin",
+    "news"
+  ],
   "publisher": "albertPu",
   "categories": [
     "Other"
   ],
-  "icon": "images/icon/momangguo128x128.png",
+  "icon": "images/icon/hotnewlogo12x128.png",
   "activationEvents": [
     "onStartupFinished"
   ],
