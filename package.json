@@ -1,7 +1,7 @@
 {
   "name": "hotNews",
   "displayName": "hot-news in China weibo, douyin, jinritoutiao...",
-  "description": "Scroll through daily trending searches, including Weibo, Zhihu, Douyin, Jinritoutiao, etc.",
+  "description": "Scroll through daily trending searches, including Weibo,Zhihu,Douyin,Jinritoutiao,baidu, etc.",
   "version": "1.3.0",
   "author": "albert.pu email: perfctrl@gmail.com",
   "engines": {
@@ -17,6 +17,7 @@
     "zhihu",
     "jinritoutiao",
     "douyin",
+    "baidu",
     "news"
   ],
   "publisher": "albertPu",
@@ -62,7 +63,8 @@
                 "zhihu",
                 "douyin",
                 "weibo",
-                "jinritoutiao"
+                "jinritoutiao",
+                "baidu"
               ]
             }
           }
