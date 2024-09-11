@@ -55,8 +55,7 @@ const initPlugin = (context: vscode.ExtensionContext) => {
 			vscode.window.showInformationMessage('暂无法刷新,请先Start');
 		} else {
 			stop();
-			start();
-			vscode.window.showInformationMessage('已刷新最想热搜榜...');
+			start(() => vscode.window.showInformationMessage('已刷新最新热搜榜...'));
 		}
 	});
 	context.subscriptions.push(refreshCommand);
@@ -68,8 +67,7 @@ const initPlugin = (context: vscode.ExtensionContext) => {
 			}
 			configChangeIntervalId = setTimeout(() => {
 				stop();
-				start();
-				vscode.window.showInformationMessage('配置已生效...');
+				start(() => vscode.window.showInformationMessage('配置已生效...'));
 			}, 5000);
 		}
 	});
@@ -84,10 +82,13 @@ const initRollingMessages = async (config: MsgConfig) => {
 };
 
 
-const start = () => {
+const start = async (callback: undefined | Function = undefined) => {
 	const config = getConfig();
 	if (isEmpty(messages)) {
-		initRollingMessages(config);
+		await initRollingMessages(config);
+	}
+	if (callback) {
+		callback();
 	}
 	if (updateMessagesIntervalId) {
 		clearTimeout(updateMessagesIntervalId);

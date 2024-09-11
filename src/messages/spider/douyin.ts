@@ -1,9 +1,10 @@
 import { Message } from "../../@types/messageType";
+import { DouyinURL } from "../../config";
 import { SpiderMessage } from "../abstractSpiderMessage";
 import { FromSource } from "../message";
 
 export class Douyin extends SpiderMessage {
-    private url: string = "https://www.iesdouyin.com/web/api/v2/hotsearch/billboard/word/";
+    private url: string = DouyinURL;
     getFromSource(): FromSource {
         return FromSource.Douyin;
     }
@@ -18,7 +19,7 @@ export class Douyin extends SpiderMessage {
             let topNo = 0;
             data.word_list.forEach((item: any) => {
                 messages.push({
-                    FromSource: FromSource.Douyin,
+                    FromSource: this.getFromSource(),
                     Title: item.word,
                     HotValue: item.hot_value,
                     Top: ++topNo

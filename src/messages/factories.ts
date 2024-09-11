@@ -3,7 +3,7 @@ import { BaseMessage, FromSource } from "./message";
 import concat from 'lodash/concat';
 import { loggerError, loggerInfo, loggerWarn } from "../logs/logger";
 import { reject, slice } from "lodash";
-import { Baidu, Douyin, Toutiao, Weibo, Zhihu } from './spider';
+import { Baidu, Douyin, Juejin, Toutiao, Weibo, Zhihu } from './spider';
 
 export class MessageFactory {
 
@@ -21,6 +21,7 @@ export class MessageFactory {
             [FromSource.Weibo]: new Weibo(),
             [FromSource.Jinritoutiao]: new Toutiao(),
             [FromSource.Baidu]: new Baidu(),
+            [FromSource.Juejin]: new Juejin(),
         };
         const spiders: BaseMessage[] = this.source.map(source => allSpiders[source]);
 

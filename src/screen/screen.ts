@@ -6,8 +6,6 @@ export const formatHotValue = (hotValue: number): string => {
     }
     if (hotValue > 10000) {
         return `${Math.ceil(hotValue / 10000)}万`;
-    } else if (hotValue > 1000) {
-        return `${Math.ceil(hotValue / 1000)}千`;
     }
     return hotValue.toString();
 };

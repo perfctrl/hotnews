@@ -1,9 +1,11 @@
 import { Message } from "../../@types/messageType";
+import { BaiduURL } from "../../config";
 import { SpiderMessage } from "../abstractSpiderMessage";
 import { FromSource } from "../message";
+import load from "cheerio";
 
 export class Baidu extends SpiderMessage {
-    private url: string = "https://api.rebang.today/v1/items?tab=baidu&sub_tab=realtime&version=1";
+    private url: string = BaiduURL;
     getFromSource(): FromSource {
         return FromSource.Baidu;
     }
@@ -29,5 +31,18 @@ export class Baidu extends SpiderMessage {
         }
         return messages;
     }
+
+    // async fetchMessages(): Promise<Message[]> {
+    //     const response = await this.fetchData("https://top.baidu.com/board?tab=realtime");
+    //     if (!response.ok) {
+    //         return [];
+    //     }
+    //     const data: string = await response.text();
+    //     const $ = load(data);
+    //     let messages: Message[] = [];
+    //      @todo
+    //     return messages;
+
+    // };
 
 }

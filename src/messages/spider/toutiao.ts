@@ -1,9 +1,10 @@
 import { Message } from "../../@types/messageType";
+import { ToutiaoURL } from "../../config";
 import { SpiderMessage } from "../abstractSpiderMessage";
 import { FromSource } from "../message";
 
 export class Toutiao extends SpiderMessage {
-    private url: string = "https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc";
+    private url: string = ToutiaoURL;
     getFromSource(): FromSource {
         return FromSource.Jinritoutiao;
     }
@@ -18,7 +19,7 @@ export class Toutiao extends SpiderMessage {
             let topNo = 0;
             data.data.forEach((item: any) => {
                 messages.push({
-                    FromSource: FromSource.Jinritoutiao,
+                    FromSource: this.getFromSource(),
                     Title: item.Title,
                     HotValue: parseInt(item.HotValue),
                     Url: item.Url,

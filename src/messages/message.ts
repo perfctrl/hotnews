@@ -10,5 +10,6 @@ export enum FromSource {
     Zhihu = 'zhihu',
     Weibo = 'weibo',
     Jinritoutiao = 'jinritoutiao',
-    Baidu = 'baidu'
+    Baidu = 'baidu',
+    Juejin = 'juejin'
 }
