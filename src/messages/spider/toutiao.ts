@@ -1,13 +1,15 @@
-import { Message } from "../@types/messageType";
-import { BaseMessage, FromSource } from "./message";
+import { Message } from "../../@types/messageType";
+import { ToutiaoURL } from "../../config";
+import { SpiderMessage } from "../abstractSpiderMessage";
+import { FromSource } from "../message";
 
-export class Toutiao implements BaseMessage {
-    private url: string = "https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc";
+export class Toutiao extends SpiderMessage {
+    private url: string = ToutiaoURL;
     getFromSource(): FromSource {
         return FromSource.Jinritoutiao;
     }
     async getMessages(): Promise<Message[]> {
-        const response = await fetch(this.url);
+        const response = await this.fetchData(this.url);
         if (!response.ok) {
             return [];
         }
@@ -17,7 +19,7 @@ export class Toutiao implements BaseMessage {
             let topNo = 0;
             data.data.forEach((item: any) => {
                 messages.push({
-                    FromSource: FromSource.Jinritoutiao,
+                    FromSource: this.getFromSource(),
                     Title: item.Title,
                     HotValue: parseInt(item.HotValue),
                     Url: item.Url,

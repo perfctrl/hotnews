@@ -1,26 +1,27 @@
-import { Message } from "../@types/messageType";
-import { loggerInfo } from "../logs/logger";
-import { BaseMessage, FromSource } from "./message";
+import { Message } from './../../@types/messageType';
+import { SpiderMessage } from "../abstractSpiderMessage";
+import { FromSource } from "../message";
+import { WeiboURL } from '../../config';
 
-export class Weibo implements BaseMessage {
-    private url: string = "https://weibo.com/ajax/statuses/hot_band";
+export class Weibo extends SpiderMessage {
+    private url: string = WeiboURL;
     getFromSource(): FromSource {
         return FromSource.Weibo;
     }
     async getMessages(): Promise<Message[]> {
-        const response = await fetch(this.url);
+        const response = await this.fetchData(this.url);
         if (!response.ok) {
+            response.statusText;
             return [];
         }
         const data: any = await response.json();
-        loggerInfo(data);
 
         let messages: Message[] = [];
         let topNo = 0;
         data.data.band_list.forEach((item: any) => {
             const isAd = item.is_ad ?? undefined;
             messages.push({
-                FromSource: FromSource.Weibo,
+                FromSource: this.getFromSource(),
                 Title: item.word,
                 HotValue: isAd ? 0 : parseInt(item.num),
                 Url: `https://s.weibo.com/weibo?q=${item.word_scheme}t=31`,

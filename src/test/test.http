@@ -1,0 +1,4 @@
+GET https://weibo.com/ajax/statuses/hot_band
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 13.0; rv:119.0) Gecko/20100101 Firefox/119.0
+###
+GET https://api.rebang.today/v1/items?tab=baidu&sub_tab=realtime&version=1
