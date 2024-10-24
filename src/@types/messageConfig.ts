@@ -4,4 +4,6 @@ export interface MsgConfig {
     scrollSpeed: number;
     msgSource: FromSource[];
     interval: number;
+    position: any;
+    offset: number;
 }

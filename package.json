@@ -2,7 +2,7 @@
   "name": "hotNews",
   "displayName": "hot-news in China weibo, douyin, jinritoutiao...",
   "description": "Scroll through daily trending searches, including Weibo,Zhihu,Douyin,Jinritoutiao,baidu,juejin etc.",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "author": "albert.pu email: perfctrl@gmail.com",
   "engines": {
     "vscode": "^1.92.0"
@@ -55,6 +55,15 @@
               30,
               45,
               60
+            ]
+          },
+          "hotnews.position": {
+            "type": "string",
+            "description": "display left or right(require: restart or reload window).",
+            "default": "right",
+            "enum": [
+              "left",
+              "right"
             ]
           },
           "hotnews.msgSource": {

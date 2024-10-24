@@ -39,3 +39,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 -  Optimize struct.
 -  speed fetch data up
+
+## [1.3.1]
+
+-  add display option left or right.

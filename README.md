@@ -27,6 +27,7 @@ This extension contributes the following settings:
 * `hotnews.scrollSpeed`: the news will keep x seconds before go to next item. default 5 seconds 
 * `hotnews.interval`: Fetch the latest data every x minutes. default 30 minutes
 * `hotnews.msgSource`: select the data source, support multiple items
+* `hotnews.position`: select display left or right(require restart or reload window)
 
 ## Known Issues
 

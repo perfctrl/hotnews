@@ -32,7 +32,9 @@ const initPlugin = (context: vscode.ExtensionContext) => {
 			vscode.env.openExternal(vscode.Uri.parse(currMessage?.Url));
 		}
 	}));
-	myStatusBarItem = vscode.window.createStatusBarItem('gitlens-graph', vscode.StatusBarAlignment.Right, 200);
+	const config = getConfig();
+
+	myStatusBarItem = vscode.window.createStatusBarItem('gitlens-graph', config.position, config.offset);
 	myStatusBarItem.command = commandId;
 	context.subscriptions.push(myStatusBarItem);
 
@@ -61,7 +63,9 @@ const initPlugin = (context: vscode.ExtensionContext) => {
 	context.subscriptions.push(refreshCommand);
 
 	vscode.workspace.onDidChangeConfiguration(event => {
-		if (event.affectsConfiguration('hotnews.interval') || event.affectsConfiguration('hotnews.scrollSpeed') || event.affectsConfiguration("hotnews.msgSource")) {
+		if (event.affectsConfiguration('hotnews.interval') ||
+			event.affectsConfiguration('hotnews.scrollSpeed') ||
+			event.affectsConfiguration("hotnews.msgSource")) {
 			if (configChangeIntervalId) {
 				clearTimeout(configChangeIntervalId);
 			}
