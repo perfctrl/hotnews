@@ -6,6 +6,7 @@ import { MessageFactory } from './messages/factories';
 import { formatDisplayMessage, formatTooltipMessage } from './screen/screen';
 import { loggerInfo } from './logs/logger';
 import isEmpty from 'lodash/isEmpty';
+import { MessageActivity } from './MessageActivity';
 
 let myStatusBarItem: vscode.StatusBarItem;
 let messages: Message[] = [];
@@ -14,6 +15,7 @@ let currMessage: Message;
 let updateMessagesIntervalId: NodeJS.Timeout | undefined;
 let configChangeIntervalId: NodeJS.Timeout | undefined;
 let rollingIntervalId: NodeJS.Timeout | undefined;
+let msgActivityObj: MessageActivity;
 
 export async function activate(context: vscode.ExtensionContext) {
 
@@ -32,7 +34,24 @@ const initPlugin = (context: vscode.ExtensionContext) => {
 			vscode.env.openExternal(vscode.Uri.parse(currMessage?.Url));
 		}
 	}));
+
 	const config = getConfig();
+
+	const refreshMessages = () => {
+		if (!rollingIntervalId) {
+			vscode.window.showInformationMessage('暂无法刷新,请先Start');
+		} else {
+			stop();
+			start(() => vscode.window.showInformationMessage('已刷新最新热搜榜...'));
+		}
+	};
+
+	msgActivityObj = new MessageActivity();
+
+	vscode.window.registerTreeDataProvider('hotNewsList', msgActivityObj);
+	context.subscriptions.push(
+		vscode.commands.registerCommand('hotNewsList.refresh', refreshMessages)
+	);
 
 	myStatusBarItem = vscode.window.createStatusBarItem('gitlens-graph', config.position, config.offset);
 	myStatusBarItem.command = commandId;
@@ -52,14 +71,7 @@ const initPlugin = (context: vscode.ExtensionContext) => {
 	});
 	context.subscriptions.push(stopCommand);
 
-	const refreshCommand = vscode.commands.registerCommand("hotnews.refresh", async () => {
-		if (!rollingIntervalId) {
-			vscode.window.showInformationMessage('暂无法刷新,请先Start');
-		} else {
-			stop();
-			start(() => vscode.window.showInformationMessage('已刷新最新热搜榜...'));
-		}
-	});
+	const refreshCommand = vscode.commands.registerCommand("hotnews.refresh", refreshMessages);
 	context.subscriptions.push(refreshCommand);
 
 	vscode.workspace.onDidChangeConfiguration(event => {
@@ -81,6 +93,7 @@ const initPlugin = (context: vscode.ExtensionContext) => {
 const initRollingMessages = async (config: MsgConfig) => {
 	loggerInfo("fetch message: start");
 	messages = await (new MessageFactory(config.msgSource).factories());
+	msgActivityObj.setResource(messages);
 	loggerInfo(`fetch message: end: length: ${messages.length}`);
 	startRolling(config);
 };
@@ -118,6 +131,7 @@ const stop = () => {
 	}
 	readNo = 0;
 	messages = [];
+	msgActivityObj.setResource(messages);
 	myStatusBarItem.hide();
 };
 

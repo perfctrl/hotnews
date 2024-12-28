@@ -40,6 +40,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 -  Optimize struct.
 -  speed fetch data up
 
-## [1.3.1]
+## [1.4.0]
+-  add activity bar list
 
 -  add display option left or right.

@@ -1,3 +1,4 @@
+import { isString } from "lodash";
 import { Message } from "../@types/messageType";
 
 export const formatHotValue = (hotValue: number): string => {
@@ -23,4 +24,22 @@ export const formatTooltipMessage = (message: Message): string => {
         return `${message.FromSource}:${message.Top ?? ''}:${formatHotValue(message.HotValue)} ${message.Title}`;
     }
     return `${message.FromSource}:${formatHotValue(message.HotValue)}: ${message.Title}`;
+};
+
+export const formatActivityTooltipMessage = (message: Message | string): string => {
+    if (isString(message)) {
+        return message;
+    }
+    return `${message.Top ?? ''}:${formatHotValue(message.HotValue)} ${message.Title}`;
+};
+
+export const formatActivityMessage = (message: Message | string): string => {
+    if (isString(message)) {
+        return message;
+    }
+    let title = message.Title;
+    if (title.length > 35) {
+        title = title.substring(0, 32) + '...';
+    }
+    return `${title}  ${formatHotValue(message.HotValue)} `;
 };
