@@ -2,7 +2,7 @@
   "name": "hotNews",
   "displayName": "hot-news in China weibo, douyin, jinritoutiao...",
   "description": "Scroll through daily trending searches, including Weibo,Zhihu,Douyin,Jinritoutiao,baidu,juejin etc.",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "author": "albert.pu email: perfctrl@gmail.com",
   "engines": {
     "vscode": "^1.92.0"
@@ -37,6 +37,25 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "packageExplorer",
+          "title": "hot news",
+          "icon": "images/icon/hotnewlogo12x128.png"
+        }
+      ]
+    },
+    "views": {
+      "packageExplorer": [
+        {
+          "id": "hotNewsList",
+          "name": "hot news list",
+          "icon": "images/icon/hotnewlogo12x128.png",
+          "contextualTitle": "Hot News"
+        }
+      ]
+    },
     "configuration": [
       {
         "title": "hot news",
@@ -71,7 +90,9 @@
             "uniqueItems": true,
             "description": "Select data source.",
             "default": [
-              "weibo"
+              "weibo",
+              "douyin",
+              "juejin"
             ],
             "items": {
               "type": "string",
@@ -100,8 +121,23 @@
       {
         "command": "hotnews.refresh",
         "title": "Trending:Refresh trending topics data"
+      },
+      {
+        "command": "hotNewsList.refresh",
+        "title": "Refresh Trending News",
+        "category": "My Activity Bar",
+        "icon": "$(refresh)"
       }
     ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "hotNewsList.refresh",
+          "when": "view == hotNewsList",
+          "group": "navigation"
+        }
+      ]
+    },
     "icons": {
       "hn-weibo": {
         "description": "weibo",
